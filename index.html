@@ -24,7 +24,7 @@ footer{margin-top:24px;padding-top:20px;border-top:1px solid var(--line);color:v
 .dialog{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 60px rgba(40,24,10,.28);max-width:420px;width:100%;max-height:min(90vh,720px);overflow:auto;position:relative}
 .dialog-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border:none;border-radius:999px;background:rgba(255,255,255,.85);font-size:1.2rem;cursor:pointer}
 .dialog .cover-wrap{min-height:260px;padding-top:28px}.dialog .cover{width:min(180px,70%)}.dialog .meta{padding:8px 22px 28px}
-.lesson-label{margin:14px 0 6px;font-size:.78rem;font-weight:700;letter-spacing:.08em;color:var(--accent)}.lesson{margin:0;font-size:1.02rem;line-height:1.65}
+.lesson-label{margin:14px 0 6px;font-size:.78rem;font-weight:700;letter-spacing:.08em;color:var(--accent)}.lesson{margin:0;font-size:1.02rem;line-height:1.65}.award-label{margin:16px 0 6px;font-size:.78rem;font-weight:700;letter-spacing:.08em;color:var(--muted)}.award{margin:0;font-size:.92rem;line-height:1.55;color:var(--ink)}
 </style>
 </head>
 <body>
@@ -37,7 +37,7 @@ footer{margin-top:24px;padding-top:20px;border-top:1px solid var(--line);color:v
 <div class="dialog-backdrop" id="bookDialog" role="dialog" aria-modal="true" hidden>
 <div class="dialog"><button type="button" class="dialog-close" id="dlgClose" aria-label="關閉">×</button>
 <div class="cover-wrap"><img class="cover" id="dlgCover" src="" alt=""/></div>
-<div class="meta"><h3 class="title" id="dlgTitle"></h3><p class="author" id="dlgAuthor"></p><p class="lesson-label">給孩子的啟發</p><p class="lesson" id="dlgLesson"></p></div></div></div>
+<div class="meta"><h3 class="title" id="dlgTitle"></h3><p class="author" id="dlgAuthor"></p><p class="lesson-label">給孩子的啟發</p><p class="lesson" id="dlgLesson"></p><p class="award-label">得獎／肯定</p><p class="award" id="dlgAward"></p></div></div></div>
 <script>
 fetch('books.json').then(r=>r.json()).then(books=>{
   const by={}; books.forEach(b=>{(by[b.date]=by[b.date]||{weekday:b.weekday,items:[]}).items.push(b)});
@@ -52,7 +52,7 @@ fetch('books.json').then(r=>r.json()).then(books=>{
     g.items.forEach(b=>{
       const el=document.createElement('article');
       el.className='book'; el.tabIndex=0; el.setAttribute('role','button');
-      el.dataset.title=b.title; el.dataset.author=b.author; el.dataset.cover=b.cover; el.dataset.lesson=b.lesson;
+      el.dataset.title=b.title; el.dataset.author=b.author; el.dataset.cover=b.cover; el.dataset.lesson=b.lesson; el.dataset.award=b.award||'';
       el.innerHTML=`<div class="cover-wrap"><img class="cover" src="${b.cover}" alt="${b.title}" loading="lazy"/></div><div class="meta"><h3 class="title">${b.title}</h3><p class="author">${b.author}</p><p class="hint">點擊看啟發</p></div>`;
       shelf.appendChild(el);
     });
@@ -60,8 +60,8 @@ fetch('books.json').then(r=>r.json()).then(books=>{
   });
   const backdrop=document.getElementById('bookDialog');
   const dlgCover=document.getElementById('dlgCover'), dlgTitle=document.getElementById('dlgTitle');
-  const dlgAuthor=document.getElementById('dlgAuthor'), dlgLesson=document.getElementById('dlgLesson');
-  function openBook(el){dlgCover.src=el.dataset.cover;dlgCover.alt=el.dataset.title;dlgTitle.textContent=el.dataset.title;dlgAuthor.textContent=el.dataset.author;dlgLesson.textContent=el.dataset.lesson;backdrop.hidden=false;backdrop.classList.add('open')}
+  const dlgAuthor=document.getElementById('dlgAuthor'), dlgLesson=document.getElementById('dlgLesson'), dlgAward=document.getElementById('dlgAward');
+  function openBook(el){dlgCover.src=el.dataset.cover;dlgCover.alt=el.dataset.title;dlgTitle.textContent=el.dataset.title;dlgAuthor.textContent=el.dataset.author;dlgLesson.textContent=el.dataset.lesson;dlgAward.textContent=el.dataset.award||'暫無公開得獎紀錄';backdrop.hidden=false;backdrop.classList.add('open')}
   function closeBook(){backdrop.classList.remove('open');backdrop.hidden=true}
   document.querySelectorAll('.book').forEach(el=>{el.addEventListener('click',()=>openBook(el));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openBook(el)}})});
   document.getElementById('dlgClose').onclick=closeBook;
